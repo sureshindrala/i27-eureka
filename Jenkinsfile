@@ -36,7 +36,11 @@ pipeline {
         stage ('Docker Format') {
             steps {
                 // Tell me, how can i read a pom.xml from jenkinfile
-                echo "JAR Source: ${env.APPLICATION_NAME}-${env.POM_VERSION}-${env.POM_PACKAGING}"
+                echo "Actual Format: ${env.APPLICATION_NAME}-${env.POM_VERSION}-${env.POM_PACKAGING}"
+                // need to have below formating 
+                // eureka-buildnumber-brnachname.paackaging
+                //eureka-06-master.jar
+                echo "Custom Format: ${env.APPLICATION_NAME}-${currentBuild.number}-${BRANCH_NAME}.${env.POM_PACKAGING}"
             }
         }
     }
