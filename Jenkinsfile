@@ -43,5 +43,13 @@ pipeline {
                 echo "Custom Format: ${env.APPLICATION_NAME}-${currentBuild.number}-${BRANCH_NAME}.${env.POM_PACKAGING}"
             }
         }
+        stage ('Docker Build') {
+            steps {
+                // doker build -t name: tag 
+                sh """
+                  ls -la
+                """
+            }
+        }
     }
 }
