@@ -5,6 +5,9 @@ pipeline {
     }
     environment {
         APPLICATION_NAME = "eureka"
+        POM_VERSION = readMavenPom().getVersion()
+        POM_PACKAGING = readMavenPom.getPackaging()
+        //version+ packaging
     }
     tools {
         maven 'Maven-3.8.8'
@@ -28,6 +31,12 @@ pipeline {
                 always {
                     junit 'target/surefire-reports/*.xml'
                 }
+            }
+        }
+        stage ('Docker Format') {
+            steps {
+                // Tell me, how can i read a pom.xml from jenkinfile
+                echo "JAR Source: ${env.APPLICATION_NAME}-${env.POM_VERSION}-${env.POM_PACKAGING}"
             }
         }
     }
