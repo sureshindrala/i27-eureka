@@ -8,6 +8,7 @@ pipeline {
         POM_VERSION = readMavenPom().getVersion()
         POM_PACKAGING = readMavenPom().getPackaging()
         //version+ packaging
+        DOCKER_HUB = "docker.io/i27devopsb2"
     }
     tools {
         maven 'Maven-3.8.8'
@@ -50,6 +51,9 @@ pipeline {
                   ls -la
                   cp ${workspace}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd
                   ls -la ./.cicd
+                  echo "******************************** Build Docker Image ********************************"
+                  docker build --force-rm --no-cache --pull --rm=true -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} ./.cicd
+                  docker images
                 """
             }
         }
@@ -59,3 +63,5 @@ pipeline {
 // cp /home/i27k8s10/jenkins/workspace/i27-Eureka_master/target/i27-eureka-0.0.1-SNAPSHOT.jar ./.cicd
 
 // workspace/target/i27-eureka-0.0.1-SNAPSHOT-jar
+
+// i27devopsb2/eureka:tag
