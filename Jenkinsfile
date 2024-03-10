@@ -9,6 +9,7 @@ pipeline {
         POM_PACKAGING = readMavenPom().getPackaging()
         //version+ packaging
         DOCKER_HUB = "docker.io/i27devopsb2"
+        DOCKER_CREDS = credentials('i27devopsb2_docker_creds')
     }
     tools {
         maven 'Maven-3.8.8'
@@ -54,6 +55,8 @@ pipeline {
                   echo "******************************** Build Docker Image ********************************"
                   docker build --force-rm --no-cache --pull --rm=true -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} ./.cicd
                   docker images
+                  echo "******************************** Login to Docker Repo ********************************"
+                  docker login ${env.DOCKER_HUB} -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}
                   echo "******************************** Docker Push ********************************"
                   docker push ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}
                 """
