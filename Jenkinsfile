@@ -54,6 +54,8 @@ pipeline {
                   echo "******************************** Build Docker Image ********************************"
                   docker build --force-rm --no-cache --pull --rm=true -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} ./.cicd
                   docker images
+                  echo "******************************** Docker Push ********************************"
+                  docker push ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}
                 """
             }
         }
