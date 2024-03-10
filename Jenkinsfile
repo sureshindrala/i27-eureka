@@ -56,7 +56,7 @@ pipeline {
                   docker build --force-rm --no-cache --pull --rm=true -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} ./.cicd
                   docker images
                   echo "******************************** Login to Docker Repo ********************************"
-                  docker login ${env.DOCKER_HUB} -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}
+                  docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}
                   echo "******************************** Docker Push ********************************"
                   docker push ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}
                 """
