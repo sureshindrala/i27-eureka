@@ -5,7 +5,7 @@ FROM openjdk:11
 ARG JAR_SOURCE
 ENV JAR_SOURCE ${JAR_SOURCE}
 ARG JAR_DEST
-ENV JAR_DEST ${JAR_DEST }
+ENV JAR_DEST ${JAR_DEST}
 RUN mkdir -p /opt/i27/
 WORKDIR /opt/i27/
 COPY ["${JAR_SOURCE}", "/opt/i27/i27cart-eureka.jar"]
