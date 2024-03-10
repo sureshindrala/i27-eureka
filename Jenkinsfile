@@ -48,8 +48,14 @@ pipeline {
                 // doker build -t name: tag 
                 sh """
                   ls -la
+                  cp ${workspace}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd
+                  ls -la ./.cicd
                 """
             }
         }
     }
 }
+
+// cp /home/i27k8s10/jenkins/workspace/i27-Eureka_master/target/i27-eureka-0.0.1-SNAPSHOT.jar ./.cicd
+
+// workspace/target/i27-eureka-0.0.1-SNAPSHOT-jar
