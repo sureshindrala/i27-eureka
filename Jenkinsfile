@@ -6,7 +6,7 @@ pipeline {
     environment {
         APPLICATION_NAME = "eureka"
         POM_VERSION = readMavenPom().getVersion()
-        POM_PACKAGING = readMavenPom.getPackaging()
+        POM_PACKAGING = readMavenPom().getPackaging()
         //version+ packaging
     }
     tools {
