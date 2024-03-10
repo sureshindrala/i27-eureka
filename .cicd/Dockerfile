@@ -11,4 +11,4 @@ WORKDIR /opt/i27/
 COPY ["${JAR_SOURCE}", "/opt/i27/i27cart-eureka.jar"]
 RUN chmod 777 /opt/i27/
 EXPOSE 8761
-CMD ["java", "jar", "/opt/i27/i27cart-eureka.jar"]
+CMD ["java", "-jar", "/opt/i27/i27cart-eureka.jar"]
