@@ -90,7 +90,8 @@ pipeline {
                     // some block
                     // With the help of this block, ,the slave will be connecting to docker-vm and execute the commands to create the containers.
                     //sshpass -p ssh -o StrictHostKeyChecking=no user@host command_to_run
-                    sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} hostname -i" 
+                    //sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} hostname -i" 
+                    sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}" 
                 }
             }
         }
