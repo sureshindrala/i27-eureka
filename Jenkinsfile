@@ -87,12 +87,14 @@ pipeline {
             steps {
                 script {
                     dockerDeploy('dev', '5761' , '8761').call()
+                    echo "Deployed to Dev Succesfully!!!!"
                 }
             }
         }
         stage ('Deploy to Test') {
             steps {
                 script {
+                    echo "***** Entering Test Environment *****"
                     dockerDeploy('tst', '6761', '8761').call()
                 }
             }
