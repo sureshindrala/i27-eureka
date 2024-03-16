@@ -12,3 +12,6 @@ main method, or use "mvn spring-boot:run or gradle bootRun or ./gradlew bootRun"
 |------------------|--------------|
 | /                        | Home page (HTML UI) listing service registrations          |
 | /eureka/apps         | Raw registration metadata |
+
+
+/ small code change
