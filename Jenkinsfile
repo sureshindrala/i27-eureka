@@ -83,6 +83,17 @@ pipeline {
                 """
             }
         }
+        stage ('Deploy to Dev') {
+            steps {
+                echo "******************************** Deploying to Dev Environment ********************************"
+                withCredentials([usernamePassword(credentialsId: 'maha_docker_vm_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                    // some block
+                    // With the help of this block, ,the slave will be connecting to docker-vm and execute the commands to create the containers.
+                    sshpass -p ssh -o StrictHostKeyChecking=no user@host command_to_run
+                    sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} hostname -i" 
+                }
+            }
+        }
     }
 }
 
@@ -91,5 +102,7 @@ pipeline {
 // workspace/target/i27-eureka-0.0.1-SNAPSHOT-jar
 
 // i27devopsb2/eureka:tag
+
+
 
 
