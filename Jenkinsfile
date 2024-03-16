@@ -85,70 +85,68 @@ pipeline {
         }
         stage ('Deploy to Dev') {
             steps {
-                echo "******************************** Deploying to Dev Environment ********************************"
-                withCredentials([usernamePassword(credentialsId: 'maha_docker_vm_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                    // some block
-                    // With the help of this block, ,the slave will be connecting to docker-vm and execute the commands to create the containers.
-                    //sshpass -p ssh -o StrictHostKeyChecking=no user@host command_to_run
-                    //sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} hostname -i" 
-                    
                 script {
-                    // Pull the image on the Docker Server
-                    sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
-                    
-                    try {
-                        // Stop the Container
-                        echo "Stoping the Container"
-                        sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker stop ${env.APPLICATION_NAME}-dev"
-
-                        // Remove the Container 
-                        echo "Removing the Container"
-                        sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker rm ${env.APPLICATION_NAME}-dev"
-                    } catch(err) {
-                        echo "Caught the Error: $err"
-                    }
-
-                    // Create a Container 
-                    echo "Creating the Container"
-                    sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker run -d -p 5761:8761 --name ${env.APPLICATION_NAME}-dev ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
-                }
+                    dockerDeploy('dev', '5761' , '8761').call()
                 }
             }
         }
         stage ('Deploy to Test') {
             steps {
-                echo "******************************** Deploying to Test Environment ********************************"
-                withCredentials([usernamePassword(credentialsId: 'maha_docker_vm_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                    // some block
-                    // With the help of this block, ,the slave will be connecting to docker-vm and execute the commands to create the containers.
-                    //sshpass -p ssh -o StrictHostKeyChecking=no user@host command_to_run
-                    //sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} hostname -i" 
-                    
                 script {
-                    // Pull the image on the Docker Server
-                    sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
-                    
-                    try {
-                        // Stop the Container
-                        echo "Stoping the Container"
-                        sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker stop ${env.APPLICATION_NAME}-tst"
-
-                        // Remove the Container 
-                        echo "Removing the Container"
-                        sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker rm ${env.APPLICATION_NAME}-tst"
-                    } catch(err) {
-                        echo "Caught the Error: $err"
-                    }
-
-                    // Create a Container 
-                    echo "Creating the Container"
-                    sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker run -d -p 6761:8761 --name ${env.APPLICATION_NAME}-tst ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
-                }
+                    dockerDeploy('tst', '6761', '8761').call()
                 }
             }
         }
+        stage ('Deploy to Stage') {
+            steps {
+                script {
+                    dockerDeploy('stage', '7761', '8761').call()
+                }
+            }
+        }
+        stage ('Deploy to Prod') {
+            steps {
+                script {
+                    dockerDeploy('prod', '8761', '8761').call()
+                }
+            }
+        }
+
     }
 }
+
+// This method is developed for Deploying our App in different environments
+def dockerDeploy(envDeploy, hostPort, contPort) {
+    echo "******************************** Deploying to $envDeploy Environment ********************************"
+    withCredentials([usernamePassword(credentialsId: 'maha_docker_vm_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+        // some block
+        // With the help of this block, ,the slave will be connecting to docker-vm and execute the commands to create the containers.
+        //sshpass -p ssh -o StrictHostKeyChecking=no user@host command_to_run
+        //sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} hostname -i" 
+        
+    script {
+        // Pull the image on the Docker Server
+        sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+        
+        try {
+            // Stop the Container
+            echo "Stoping the Container"
+            sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker stop ${env.APPLICATION_NAME}-$envDeploy"
+
+            // Remove the Container 
+            echo "Removing the Container"
+            sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker rm ${env.APPLICATION_NAME}-$envDeploy"
+             } catch(err) {
+            echo "Caught the Error: $err"
+        }
+
+        // Create a Container 
+        echo "Creating the Container"
+        sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker run -d -p $hostPort:$contPort --name ${env.APPLICATION_NAME}-$envDeploy ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+        }
+    }
+}
+
 
 // cp /home/i27k8s10/jenkins/workspace/i27-Eureka_master/target/i27-eureka-0.0.1-SNAPSHOT.jar ./.cicd
 
