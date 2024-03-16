@@ -35,6 +35,17 @@ pipeline {
                 }
             }
         }
+        stage ('Sonar') {
+            steps {
+                sh """
+                echo "Starting Sonar Scan"
+                mvn clean verify sonar:sonar \
+                    -Dsonar.projectKey=i27-eureka \
+                    -Dsonar.host.url=http://34.122.97.102:9000 \
+                    -Dsonar.login=sqp_f8c3e230410501e96749690544da73b635148302
+                """
+            }
+        }
         stage ('Docker Format') {
             steps {
                 // Tell me, how can i read a pom.xml from jenkinfile
@@ -45,7 +56,7 @@ pipeline {
                 echo "Custom Format: ${env.APPLICATION_NAME}-${currentBuild.number}-${BRANCH_NAME}.${env.POM_PACKAGING}"
             }
         }
-        stage ('Docker Build') {
+        stage ('Docker Build and Push') {
             steps {
                 // doker build -t name: tag 
                 sh """
@@ -70,3 +81,9 @@ pipeline {
 // workspace/target/i27-eureka-0.0.1-SNAPSHOT-jar
 
 // i27devopsb2/eureka:tag
+
+
+mvn clean verify sonar:sonar \
+  -Dsonar.projectKey=i27-eureka \
+  -Dsonar.host.url=http://34.122.97.102:9000 \
+  -Dsonar.login=sqp_f8c3e230410501e96749690544da73b635148302
