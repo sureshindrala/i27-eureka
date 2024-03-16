@@ -83,7 +83,3 @@ pipeline {
 // i27devopsb2/eureka:tag
 
 
-mvn clean verify sonar:sonar \
-  -Dsonar.projectKey=i27-eureka \
-  -Dsonar.host.url=http://34.122.97.102:9000 \
-  -Dsonar.login=sqp_f8c3e230410501e96749690544da73b635148302
