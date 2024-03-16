@@ -48,10 +48,12 @@ pipeline {
                             -Dsonar.login=${SONAR_TOKEN}
                     """
                 }
-                timeout (time: 2, unit: 'MINUTES') // NANOSECONDS, SECONDS , MINUTES , HOURS, DAYS
+                timeout (time: 2, unit: 'MINUTES') { // NANOSECONDS, SECONDS , MINUTES , HOURS, DAYS
                     script {
                         waitForQualityGate abortPipeline: true
                     }
+                } 
+
             }
         }
         stage ('Docker Format') {
