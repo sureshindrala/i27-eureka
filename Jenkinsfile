@@ -59,7 +59,10 @@ pipeline {
             }
             // Application Build happens here
             steps { // jenkins env variable no need of env 
-                buildApp().call()
+                script {
+                    buildApp().call()
+                }
+
                 //-DskipTests=true 
             }
         }
@@ -128,7 +131,10 @@ pipeline {
             }
             steps {
                 // doker build -t name: tag 
-                dockerBuildandPush().call()
+                script {
+                    dockerBuildandPush().call()
+                }
+
             }
         }
         stage ('Deploy to Dev') {
