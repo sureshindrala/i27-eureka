@@ -3,6 +3,36 @@ pipeline {
     agent {
         label 'k8s-slave'
     }
+    parameters {
+        choice(name: 'buildOnly',
+            choices: 'no\nyes',
+            description: 'This will only build the application'
+        )
+        choice(name: 'scanOnly',
+            choices: 'no\nyes',
+            description: 'This will Scan the application'
+        )
+        choice(name: 'dockerPush',
+            choices: 'no\nyes',
+            description: 'This will build the app, docker build, docker push'
+        )
+        choice(name: 'deployToDev',
+            choices: 'no\nyes',
+            description: 'This will Deploy the app to Dev env'
+        )
+        choice(name: 'deployToTest',
+            choices: 'no\nyes',
+            description: 'This will Deploy the app to Test env'
+        )
+        choice(name: 'deployToStage',
+            choices: 'no\nyes',
+            description: 'This will Deploy the app to Stage env'
+        )
+        choice(name: 'deployToProd',
+            choices: 'no\nyes',
+            description: 'This will Deploy the app to Prod env'
+        )
+    }
     environment {
         APPLICATION_NAME = "eureka"
         POM_VERSION = readMavenPom().getVersion()
@@ -19,6 +49,14 @@ pipeline {
     }
     stages {
         stage ('Build'){
+            when {
+                anyOf {
+                    expression {
+                        params.buildOnly == 'yes'
+                        params.dockerPush == 'yes'
+                    }
+                }
+            }
             // Application Build happens here
             steps { // jenkins env variable no need of env 
                 echo "Building the ${env.APPLICATION_NAME} application"
@@ -27,6 +65,14 @@ pipeline {
             }
         }
         stage ('Unit Tests') {
+            when {
+                anyOf {
+                    expression {
+                        params.buildOnly == 'yes'
+                        params.dockerPush == 'yes'
+                    }
+                }
+            }
             steps {
                 echo "Performing Unit tests for ${env.APPLICATION_NAME} application"
                 sh "mvn test"
@@ -38,6 +84,10 @@ pipeline {
             }
         }
         stage ('Sonar') {
+            when {
+                    params.scanOnly == 'yes'  
+                }
+            }
             steps {
                 echo "Starting Sonarqube With Quality Gates"
                 withSonarQubeEnv('SonarQube'){ // manage jenkins > configure  > sonarqube scanner
@@ -56,6 +106,7 @@ pipeline {
 
             }
         }
+        /*
         stage ('Docker Format') {
             steps {
                 // Tell me, how can i read a pom.xml from jenkinfile
@@ -65,8 +116,15 @@ pipeline {
                 //eureka-06-master.jar
                 echo "Custom Format: ${env.APPLICATION_NAME}-${currentBuild.number}-${BRANCH_NAME}.${env.POM_PACKAGING}"
             }
-        }
+        }*/
         stage ('Docker Build and Push') {
+            when {
+                anyOf {
+                    expression {
+                        params.dockerPush == 'yes'
+                    }
+                }
+            }
             steps {
                 // doker build -t name: tag 
                 sh """
@@ -84,6 +142,11 @@ pipeline {
             }
         }
         stage ('Deploy to Dev') {
+            when {
+                expression {
+                    params.deployToDev == 'yes'
+                }
+            }
             steps {
                 script {
                     dockerDeploy('dev', '5761' , '8761').call()
@@ -92,6 +155,11 @@ pipeline {
             }
         }
         stage ('Deploy to Test') {
+            when {
+                expression {
+                    params.deployToTest == 'yes'
+                }
+            }
             steps {
                 script {
                     echo "***** Entering Test Environment *****"
@@ -100,13 +168,23 @@ pipeline {
             }
         }
         stage ('Deploy to Stage') {
+            when {
+                expression {
+                    params.deployToStage == 'yes'
+                }
+            }
             steps {
                 script {
                     dockerDeploy('stage', '7761', '8761').call()
                 }
             }
-        }
+        } 
         stage ('Deploy to Prod') {
+            when {
+                expression {
+                    params.deployToProd == 'yes'
+                }
+            }
             steps {
                 script {
                     dockerDeploy('prod', '8761', '8761').call()
@@ -114,7 +192,6 @@ pipeline {
             }
         }
 
-    }
 }
 
 // This method is developed for Deploying our App in different environments
