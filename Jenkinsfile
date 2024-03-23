@@ -53,7 +53,7 @@ pipeline {
                 anyOf {
                     expression {
                         params.buildOnly == 'yes'
-                        params.dockerPush == 'yes'
+                       // params.dockerPush == 'yes'
                     }
                 }
             }
