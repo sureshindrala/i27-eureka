@@ -59,8 +59,7 @@ pipeline {
             }
             // Application Build happens here
             steps { // jenkins env variable no need of env 
-                echo "Building the ${env.APPLICATION_NAME} application"
-                sh "mvn clean package -DskipTests=true"
+                buildApp().call()
                 //-DskipTests=true 
             }
         }
@@ -129,18 +128,7 @@ pipeline {
             }
             steps {
                 // doker build -t name: tag 
-                sh """
-                  ls -la
-                  cp ${workspace}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd
-                  ls -la ./.cicd
-                  echo "******************************** Build Docker Image ********************************"
-                  docker build --force-rm --no-cache --pull --rm=true --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} ./.cicd
-                  docker images
-                  echo "******************************** Login to Docker Repo ********************************"
-                  docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}
-                  echo "******************************** Docker Push ********************************"
-                  docker push ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}
-                """
+                dockerBuildandPush().call()
             }
         }
         stage ('Deploy to Dev') {
@@ -151,6 +139,7 @@ pipeline {
             }
             steps {
                 script {
+                    imageValidation().call()
                     dockerDeploy('dev', '5761' , '8761').call()
                     echo "Deployed to Dev Succesfully!!!!"
                 }
@@ -164,6 +153,7 @@ pipeline {
             }
             steps {
                 script {
+                    imageValidation().call()
                     echo "***** Entering Test Environment *****"
                     dockerDeploy('tst', '6761', '8761').call()
                 }
@@ -177,6 +167,7 @@ pipeline {
             }
             steps {
                 script {
+                    imageValidation().call()
                     dockerDeploy('stage', '7761', '8761').call()
                 }
             }
@@ -189,6 +180,7 @@ pipeline {
             }
             steps {
                 script {
+                    imageValidation().call()
                     dockerDeploy('prod', '8761', '8761').call()
                 }
             }
@@ -198,6 +190,19 @@ pipeline {
                 cleanWs()
             }
         }
+    }
+}
+
+// This method will build image and push to registry
+def dockerBuildandPush(){
+    return {
+            echo "******************************** Build Docker Image ********************************"
+            docker build --force-rm --no-cache --pull --rm=true --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} ./.cicd
+            docker images
+            echo "******************************** Login to Docker Repo ********************************"
+            docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}
+            echo "******************************** Docker Push ********************************"
+            docker push ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}
     }
 }
 
@@ -236,7 +241,26 @@ def dockerDeploy(envDeploy, hostPort, contPort) {
     
 }
 
+def imageValidation() {
+    println ("Pulling the docker image")
+    try {
+       sh "docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}" 
+    }
+    catch (Exception e) {
+        println("OOPS!, docker images with this tag is not available")
+        buildApp().call()
+        dockerBuildandPush().call()
+    }
+}
 
+
+def buildApp() {
+    return {    
+        echo "Building the ${env.APPLICATION_NAME} application"
+        sh "mvn clean package -DskipTests=true"
+    }
+
+}
 // cp /home/i27k8s10/jenkins/workspace/i27-Eureka_master/target/i27-eureka-0.0.1-SNAPSHOT.jar ./.cicd
 
 // workspace/target/i27-eureka-0.0.1-SNAPSHOT-jar
