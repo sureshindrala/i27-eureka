@@ -189,10 +189,14 @@ pipeline {
                     }
                     anyOf {
                         branch 'release/*'
+                        // only tags with vx.x.x should deploy to prod
                     }
                 }
             }
             steps {
+                timeout(time: 300, unit: 'SECONDS') {
+                    input message: "Deploying ${env.APPLICATION_NAME} to prod ????", ok: 'yes', submitter: 'krish'
+                }
                 script {
                     imageValidation().call()
                     dockerDeploy('prod', '8761', '8761').call()
