@@ -88,7 +88,6 @@ pipeline {
                     expression {
                         params.scanOnly == 'yes'  
                     }
-                }
             }
             steps {
                 echo "Starting Sonarqube With Quality Gates"
@@ -106,6 +105,7 @@ pipeline {
                     }
                 } 
 
+            
             }
         }
         /*
