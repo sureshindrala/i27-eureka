@@ -196,10 +196,9 @@ pipeline {
 // This method will build image and push to registry
 def dockerBuildandPush(){
     return {
-            ls -la
-            cp ${workspace}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd
-            ls -la ./.cicd
             echo "******************************** Build Docker Image ********************************"
+            sh "cp ${workspace}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd"
+            sh "ls -la ./.cicd"
             docker build --force-rm --no-cache --pull --rm=true --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} ./.cicd
             docker images
             echo "******************************** Login to Docker Repo ********************************"
