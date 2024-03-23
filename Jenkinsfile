@@ -193,7 +193,7 @@ pipeline {
                 }
             }
         }
-
+    }
 }
 
 // This method is developed for Deploying our App in different environments
