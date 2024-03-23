@@ -210,6 +210,7 @@ def dockerBuildandPush(){
             sh "docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}"
             echo "******************************** Docker Push ********************************"
             sh "docker push ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+            echo "Pushed the image succesfully!!!"
     }
 }
 
