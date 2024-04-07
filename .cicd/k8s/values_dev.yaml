@@ -4,5 +4,5 @@ replicas:
   default: 1
 image:
   name: docker.io/i27devopsb2/eureka
-  tag: dev
+  tag: dev  # helm --set key=value -f filename  
 targetport: 8761
