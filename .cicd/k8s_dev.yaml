@@ -15,7 +15,7 @@ spec:
       containers:
         - name: i27-eureka-dev
         # the below image should be dynamically change based on the devlelopment 
-          image: DIT
+          image: DIT #docker.io/i27devopsb2/eureka:82b3701
           resources:
             requests:
               memory: "128Mi"
