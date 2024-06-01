@@ -16,7 +16,7 @@ pipeline {
             // building the application
             steps{
                 echo "build  ${env.APPLICATION_NAME} Application "
-                sh "mvn clean package -DskipTest=true"
+                sh "mvn clean package -DskipTests=true"
             }
 
         }
