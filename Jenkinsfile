@@ -25,7 +25,13 @@ pipeline {
                 echo "UnitTest for ${env.APPLICATION_NAME} Apllicatio"
                 sh "mvn test"
             }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
         }
+
     }
 
 
