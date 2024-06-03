@@ -35,10 +35,12 @@ pipeline {
         stage ('Docker format') {
             steps {
                 echo "JAR Source: ${env.APPLICATION_NAME}-${env.POM_VERSION}-${env.POM_PACKAGING}"  
+            // need to have below farmating
+            // eureka build number and formating 
+            // eureka-06-master.jar
+            echo "Jar Dest: ${env.APPLICATION_NAME}-${currentBuild.number}-${BRANCH_NAME}-${env.POM_PACKAGING}"
+
             }
         }
-
     }
-
-
 }
