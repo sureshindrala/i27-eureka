@@ -46,6 +46,8 @@ pipeline {
             steps{
                 sh """
                 ls -la
+                cp ${workspace}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}-${env.POM_PACKAGING} ./.cicd
+                ls -la
 
 
                 """
@@ -53,3 +55,7 @@ pipeline {
         }
     }
 }
+
+// cp /home/i27k8s10/jenkins/workspace/i27-Eureka_master/target/i27-eureka-0.0.1-SNAPSHOT.jar ./.cicd
+
+// cp ${workspace}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd
