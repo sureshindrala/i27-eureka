@@ -42,5 +42,14 @@ pipeline {
 
             }
         }
+        stage ('Docker Build') {
+            steps{
+                sh """
+                ls -la
+
+
+                """
+            }
+        }
     }
 }
