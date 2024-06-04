@@ -52,6 +52,9 @@ pipeline {
                 cp ${workspace}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd
                                 
                  ls -la ./.cicd
+                 echo "***********Build Docker Image *******************"
+
+                 
                 echo "************ Docker login *******************
                 docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}                
                 
