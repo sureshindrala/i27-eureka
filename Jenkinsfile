@@ -53,7 +53,7 @@ pipeline {
                                 
                  ls -la ./.cicd
                 echo "************ Docker login *******************
-                docker login -u ${DOCKER_CREDS_USR} -P ${DOCKER_CREDS_PSW https://hub.docker.com/}                
+                docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}                
                 
 
                 """
