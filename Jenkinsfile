@@ -53,7 +53,7 @@ pipeline {
                                 
                  ls -la ./.cicd
                 echo "************ Docker login *******************
-                docker login -u ${DOCKER_CREDS_USR} -P ${DOCKER_CREDS_PSW}                
+                docker login -u ${DOCKER_CREDS_USR} -P ${DOCKER_CREDS_PSW https://hub.docker.com/}                
                 
 
                 """
@@ -65,3 +65,4 @@ pipeline {
 // cp /home/i27k8s10/jenkins/workspace/i27-Eureka_master/target/i27-eureka-0.0.1-SNAPSHOT.jar ./.cicd
 
 // cp ${workspace}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd
+//  docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}
