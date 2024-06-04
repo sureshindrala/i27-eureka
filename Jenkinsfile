@@ -8,7 +8,7 @@ pipeline {
         POM_PACKAGING = readMavenPom().getPackaging()
         // version + packaging
         DOCKER_HUB = "docker.io/sureshindrala"
-        DOCKER_CREDS = credential ('dockerhub_creds')
+        DOCKER_CREDS = credentials("dockerhub_creds")
     }
     tools{
         maven 'Maven-3.8.8'
