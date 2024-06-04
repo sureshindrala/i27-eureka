@@ -6,6 +6,9 @@ pipeline {
         APPLICATION_NAME = "eureka"
         POM_VERSION = readMavenPom().getVersion()
         POM_PACKAGING = readMavenPom().getPackaging()
+        // version + packaging
+        DOCKER_HUB = "docker.io/sureshindrala"
+        DOCKER_CREDS = credential ('dockerhub_creds')
     }
     tools{
         maven 'Maven-3.8.8'
@@ -49,7 +52,8 @@ pipeline {
                 cp ${workspace}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd
                                 
                  ls -la ./.cicd
-                
+                echo "************ Docker login *******************
+                docker login -u ${DOCKER_CREDS_USR} -P ${DOCKER_CREDS_PSW}                
                 
 
                 """
