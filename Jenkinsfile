@@ -9,6 +9,8 @@ pipeline {
         // version + packaging
         DOCKER_HUB = "docker.io/sureshindrala"
         DOCKER_CREDS = credentials("dockerhub_creds")
+        SONAR_URL = "http://34.66.190.70:9000 "
+        SONAR_TOKEN = credentials("sonar_creds")
     }
     tools{
         maven 'Maven-3.8.8'
@@ -41,8 +43,8 @@ pipeline {
                 echo "******** Sonar starting *************"
                 mvn clean verify sonar:sonar \
                     -Dsonar.projectKey=i27-eureka \
-                    -Dsonar.host.url=http://34.66.190.70:9000 \
-                    -Dsonar.login=squ_401fe3557766b5b02aad46db890b0f7639d4cd58
+                    -Dsonar.host.url=${env. SONAR_URL} \
+                    -Dsonar.login=${SONAR_TOKEN}
                 '''
             }
         }
