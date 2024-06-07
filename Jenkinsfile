@@ -42,11 +42,11 @@ pipeline {
             steps {
                 echo "Starting Sonarqube with quality gates"
                 withSonarQubeEnv('SonarQube') {
-            sh """
-                mvn clean verify sonar:sonar \
-                    -Dsonar.projectKey=i27-eureka \
-                    -Dsonar.host.url=${env.SONAR_URL} \
-                    -Dsonar.login=${env.SONAR_TOKEN}
+                    sh """
+                    mvn clean verify sonar:sonar \
+                        -Dsonar.projectKey=i27-eureka \
+                        -Dsonar.host.url=${env.SONAR_URL} \
+                        -Dsonar.login=${env.SONAR_TOKEN}
                 """
                 }
                 timeout (time: 2,unit: 'MINUTES')
