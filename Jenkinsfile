@@ -40,15 +40,25 @@ pipeline {
         }
         stage('sonar') {
             steps {
-                sh """
-                echo "Starting Sonar Scan"
+                echo "Starting Sonarqube with quality gates"
+                withSonarQubeEnv('SonarQube') {
+            sh """
                 mvn clean verify sonar:sonar \
                     -Dsonar.projectKey=i27-eureka \
                     -Dsonar.host.url=${env.SONAR_URL} \
                     -Dsonar.login=${env.SONAR_TOKEN}
                 """
+                }
+                timeout (time: 2,unit: 'MINUTES')
+                script {
+                    waitForQualityGate abortPipeline: true
+
+                    
+                    }
+                }
+                
             }
-        }
+        
         stage ('Docker format') {
             steps {
                 echo "JAR Source: ${env.APPLICATION_NAME}-${env.POM_VERSION}-${env.POM_PACKAGING}"  
