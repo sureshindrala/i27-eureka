@@ -38,7 +38,7 @@ pipeline {
                 }
             }
         }
-        stage('sonar') {
+        stage ('sonar') {
             steps {
                 withSonarQubeEnv('SonarQube')
                 sh """
@@ -49,7 +49,7 @@ pipeline {
                     -Dsonar.login=${env.SONAR_TOKEN}
                 """
             }
-            timeout(time: 1, unit: 'MINUTES') {
+            timeout (time: 2, unit: 'MINUTES') {
                 waitForQualityGate abortPipeline: true
 
             }
