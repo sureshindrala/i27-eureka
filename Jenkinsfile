@@ -38,7 +38,7 @@ pipeline {
                 }
             }
         }
-        stage('sonar-test') {
+        stage('sonar') {
             steps {
                 sh '''
                 echo "Starting Sonar Scan"
