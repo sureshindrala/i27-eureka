@@ -40,6 +40,7 @@ pipeline {
         }
         stage('sonar') {
             steps {
+                withSonarQubeEnv('SonarQube')
                 sh """
                 echo "Starting Sonarqube"
                 mvn clean verify sonar:sonar \
@@ -48,6 +49,9 @@ pipeline {
                     -Dsonar.login=${env.SONAR_TOKEN}
                 """
             }
+            timeout(time: 1, unit: 'MINUTES') {
+                waitForQualityGate abortPipeline: true
+
         }
         stage ('Docker format') {
             steps {
@@ -87,3 +91,17 @@ pipeline {
 
 // cp ${workspace}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd
 //  docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}
+
+///
+//steps {
+  //            withSonarQubeEnv('My SonarQube Server') {
+    //            sh 'mvn clean package sonar:sonar'
+      //        }
+        //    }
+          //}
+          //stage("Quality Gate") {
+            //steps {
+              //timeout(time: 1, unit: 'HOURS') {
+                //waitForQualityGate abortPipeline: true
+              //}
+            /} 
