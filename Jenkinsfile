@@ -38,29 +38,29 @@ pipeline {
                 }
             }
         }
-        stage ('sonar') {
+
+          stage("build & SonarQube analysis") {
             steps {
-                withSonarQubeEnv('SonarQube')
-                sh """
+              withSonarQubeEnv('SonarQube') {
+               sh """
                 echo "Starting Sonarqube"
                 mvn clean verify sonar:sonar \
                     -Dsonar.projectKey=i27-eureka \
                     -Dsonar.host.url=${env.SONAR_URL} \
                     -Dsonar.login=${env.SONAR_TOKEN}
                 """
+              }
             }
-        }
-        stage ("quality gate") {
+          }
+          stage("Quality Gate") {
             steps {
-                timeout (time: 2, unit: 'MINUTES') {
+              timeout(time: 2, unit: 'MINUTES') {
                 waitForQualityGate abortPipeline: true
+              }
             }
-                
-            }
-        }    
+          }
         
-
-        stage ('Docker format') {
+          stage ('Docker format') {
             steps {
                 echo "JAR Source: ${env.APPLICATION_NAME}-${env.POM_VERSION}-${env.POM_PACKAGING}"  
             // need to have below farmating
