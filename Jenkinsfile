@@ -52,7 +52,9 @@ pipeline {
             timeout(time: 1, unit: 'MINUTES') {
                 waitForQualityGate abortPipeline: true
 
+            }
         }
+
         stage ('Docker format') {
             steps {
                 echo "JAR Source: ${env.APPLICATION_NAME}-${env.POM_VERSION}-${env.POM_PACKAGING}"  
