@@ -49,11 +49,16 @@ pipeline {
                     -Dsonar.login=${env.SONAR_TOKEN}
                 """
             }
-            timeout (time: 2, unit: 'MINUTES') {
-                waitForQualityGate abortPipeline: true
-
-            }
         }
+        stage ("quality gate") {
+            steps {
+                timeout (time: 2, unit: 'MINUTES') {
+                waitForQualityGate abortPipeline: true
+            }
+                
+            }
+        }    
+        
 
         stage ('Docker format') {
             steps {
