@@ -40,7 +40,7 @@ pipeline {
         stage('sonar-test') {
             steps {
                 sh '''
-                echo "******** Sonar starting *************"
+                echo "Starting Sonar Scan"
                 mvn clean verify sonar:sonar \
                     -Dsonar.projectKey=i27-eureka \
                     -Dsonar.host.url=${env.SONAR_URL} \
