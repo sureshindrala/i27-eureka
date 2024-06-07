@@ -40,9 +40,9 @@ pipeline {
                 sh """""
                  echo  "******** Sonar starting*************"
                  mvn clean verify sonar:sonar \
-                 -Dsonar.projectKey=i27-eureka \
-                 -Dsonar.host.url=http://34.66.190.70:9000 \
-                 -Dsonar.login=squ_401fe3557766b5b02aad46db890b0f7639d4cd58
+                    -Dsonar.projectKey=i27-eureka \
+                    -Dsonar.host.url=http://34.66.190.70:9000 \
+                    -Dsonar.login=squ_401fe3557766b5b02aad46db890b0f7639d4cd58
             
 
                 """
