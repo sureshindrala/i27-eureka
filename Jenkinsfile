@@ -114,3 +114,12 @@ pipeline {
                 //waitForQualityGate abortPipeline: true
               //}
     //        /} 
+
+
+
+  /*
+    mvn clean verify sonar:sonar \
+  -Dsonar.projectKey=i27-eureka \
+  -Dsonar.host.url=http://34.66.190.70:9000 \
+  -Dsonar.login=sqp_888f323cb8e0ba863de1055244da41b3d7c11300
+  */
