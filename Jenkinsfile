@@ -50,15 +50,19 @@ pipeline {
                     -Dsonar.login=${env.SONAR_TOKEN}
                 """
               }
-            }
-          }
-              timeout(time: 5, unit: 'MINUTES') {
-                waitForQualityGate abortPipeline: true
-              }
             
           
-        
-          stage ('Docker format') {
+            timeout(time: 5, unit: 'MINUTES') {
+              script {
+                waitForQualityGate abortPipeline: true
+
+                }
+              
+              }
+            }
+        } 
+                 
+        stage ('Docker format') {
             steps {
                 echo "JAR Source: ${env.APPLICATION_NAME}-${env.POM_VERSION}-${env.POM_PACKAGING}"  
             // need to have below farmating
