@@ -93,8 +93,22 @@ pipeline {
                 """
             }
         }
+        stage ('Deploy to Dev') {
+          steps {
+            echo "*********************Deploying to Devenvironment*************"
+            withCredentials([usernamePassword(credentialsId: 'docker_env_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+              "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} hostname -i" 
+          }
+        }
     }
+  }
 }
+
+
+
+
+
+//sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} hostname -i" 
 // /home/sureshindrala1/jenkins/workspace/eureka_master/target/i27-eureka-0.0.1-SNAPSHOT.jar
 // cp /home/i27k8s10/jenkins/workspace/i27-Eureka_master/target/i27-eureka-0.0.1-SNAPSHOT.jar ./.cicd
 
