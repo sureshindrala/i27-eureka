@@ -125,7 +125,7 @@ pipeline {
             }
         }
       // This method is developed for Deploying our App in different environments
-      def dockerDeploy(envDeploy,hostport,contPort) {
+    def dockerDeploy(envDeploy,hostport,contPort) {
         return {
           echo " *************** Deploying to $envDeploy Environment**********************"
           withCredentials([usernamePassword(credentialsId: 'docker_env_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
