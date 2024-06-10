@@ -88,9 +88,8 @@ pipeline {
 
                 echo "************** Docker Push ******************"
                 docker push ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}              
-                
-
-                """
+              
+               """
             }
         }
         stage ('Deploy to Dev') {
@@ -106,13 +105,12 @@ pipeline {
           script {
             echo "*********** Pull The Image ***************************"
             sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
- 
-            try {
+             try {
               // stop the container
               echo ">>>>>>>>>>>>>>>>> stop the container <<<<<<<<<<<<<"
-              sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker stop ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}-dev"
+              sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker stop ${env.APPLICATION_NAME}-dev"
               echo ">>>>>>>>>>>>>>>>> remove the container <<<<<<<<<<<<<<<<<<<<<<<<"
-              sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker rm ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}-dev"
+              sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker rm ${env.APPLICATION_NAME}-dev"
  
             } catch (err) {
               echo "Caught the error : $err"
