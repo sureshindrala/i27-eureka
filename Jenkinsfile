@@ -39,7 +39,7 @@ pipeline {
             }
         }
 
-          stage("build & SonarQube analysis") {
+        stage("build & SonarQube analysis") {
             steps {
               withSonarQubeEnv('SonarQube') {
                sh """
@@ -91,70 +91,74 @@ pipeline {
               
                """
             }
+          }
+      stage ('Deploy to Dev') {
+            steps {
+                script {
+                    echo "***** Entering Test Environment *****"
+                    dockerDeploy('dev ', '5761', '8761').call()
+                }
+            }
         }
-        stage ('Deploy to Dev') {
-          steps {
-            echo "*********************Deploying to Devenvironment*************"
-            withCredentials([usernamePassword(credentialsId: 'docker_env_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+      stage ('Deploy to Test') {
+            steps {
+                script {
+                    echo "***** Entering Test Environment *****"
+                    dockerDeploy('tst', '6761', '8761').call()
+                }
+            }
+        }
+      stage ('Deploy to stage') {
+            steps {
+                script {
+                    echo "***** Entering Test Environment *****"
+                    dockerDeploy('stage', '7761', '8761').call()
+                }
+            }
+        }
+      stage ('Deploy to prod') {
+            steps {
+                script {
+                    echo "***** Entering Test Environment *****"
+                    dockerDeploy('prod', '8761', '8761').call()
+                }
+            }
+        }
+      // This method is developed for Deploying our App in different environments
+      def dockerDeploy(envDeploy,hostport,contPort) {
+        return {
+          echo " *************** Deploying to $envDeploy Environment**********************"
+          withCredentials([usernamePassword(credentialsId: 'docker_env_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
             script {
-              echo "***********pull image from the docker*****************"
-            sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+              // pull the image from docker server
+              sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
 
             try {
-              echo ">>>>>>>>>>>>>>>>>> Stoping the container <<<<<<<<<<<<<<<<<<<<<<"
-              sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker stop ${env.APPLICATION_NAME}-tst"
-              echo ">>>>>>>>>>>>>>>>>> Removing the Container <<<<<<<<<<<<<<<<<<<<<<<"
-              sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker rm ${env.APPLICATION_NAME}-tst"
+              // stop the container
+              echo ">>>>>>>>>> stoping the container <<<<<<<<<<<<<<"
+              sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker stop ${env.APPLICATION_NAME}-$envDeploy"
+              // Remove the Container
+              echo " >>>>>> Removing the container <<<<<<<<<<<<<"
+              sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker rm ${env.APPLICATION_NAME}-$envDeploy"
             } catch (err) {
-              echo "caught the Error: $err"
+              echo "Caught the error: $err"
             }
-            // Create a container
-            echo "Creating thr container"
-            sh  "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker run -d -p 6761:8761 --name ${env.APPLICATION_NAME}-tst ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
-
-
+            // create container
+            echo "************** Creating the container **********************"
+            sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker run -d -p $hostPort:$contPort --name ${env.APPLICATION_NAME}-$envDeploy ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+            }
+            }
           }
-             
         }
-
       }
+                  
     }
-  }
-}
 
 
 
 
 
-//sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} hostname -i" 
-// /home/sureshindrala1/jenkins/workspace/eureka_master/target/i27-eureka-0.0.1-SNAPSHOT.jar
-// cp /home/i27k8s10/jenkins/workspace/i27-Eureka_master/target/i27-eureka-0.0.1-SNAPSHOT.jar ./.cicd
-
-// cp ${workspace}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd
-//  docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}
-
-///
-//steps {
-  //            withSonarQubeEnv('My SonarQube Server') {
-    //            sh 'mvn clean package sonar:sonar'
-      //        }
-        //    }
-          //}
-          //stage("Quality Gate") {
-            //steps {
-              //timeout(time: 1, unit: 'HOURS') {
-                //waitForQualityGate abortPipeline: true
-              //}
-    //        /} 
-
-
-
-  /*
-    mvn clean verify sonar:sonar \
-  -Dsonar.projectKey=i27-eureka \
-  -Dsonar.host.url=http://34.66.190.70:9000 \
-  -Dsonar.login=sqp_888f323cb8e0ba863de1055244da41b3d7c11300
-
+/*
 // dev ==> 5761 (HP)
 // test ==> 6761 (HP)
 // stage ==> 7761 (HP)
