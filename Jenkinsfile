@@ -101,6 +101,8 @@ pipeline {
 
              echo "***********pull image from the docker*****************"
              sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+            echo " *************** Creating Container *****************************"
+             sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker run -d -p 5761:8761 --name ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
           }
         }
     }
@@ -139,4 +141,11 @@ pipeline {
   -Dsonar.projectKey=i27-eureka \
   -Dsonar.host.url=http://34.66.190.70:9000 \
   -Dsonar.login=sqp_888f323cb8e0ba863de1055244da41b3d7c11300
+
+// dev ==> 5761 (HP)
+// test ==> 6761 (HP)
+// stage ==> 7761 (HP)
+// Prod ==> 8761 (HP)
+
+
   */
