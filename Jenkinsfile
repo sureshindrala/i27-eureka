@@ -110,9 +110,9 @@ pipeline {
             try {
               // stop the container
               echo ">>>>>>>>>>>>>>>>> stop the container <<<<<<<<<<<<<"
-              sh "sh sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker stop ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}-dev"
+              sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker stop ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}-dev"
               echo ">>>>>>>>>>>>>>>>> remove the container <<<<<<<<<<<<<<<<<<<<<<<<"
-              sh "sh sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker rm ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}-dev"
+              sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker rm ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}-dev"
  
             } catch (err) {
               echo "Caught the error : $err"
