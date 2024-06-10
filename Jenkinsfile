@@ -96,17 +96,28 @@ pipeline {
           steps {
             echo "*********************Deploying to Devenvironment*************"
             withCredentials([usernamePassword(credentialsId: 'docker_env_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-             //sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} hostname -i"
-            echo "***********pull image from the docker*****************"
+            script {
+              echo "***********pull image from the docker*****************"
             sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
-           // creating container
-            sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker run -d -p 5761:8761 --name ${env.APPLICATION_NAME}-dev ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
-           //sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker run -d -p 6761:8761 --name ${env.APPLICATION_NAME}-tst ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
-           
-           // sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} 'docker run -d -p 5761:8761 --name ${env.APPLICATION_NAME} \${env.DOCKER_HUB}/\${env.APPLICATION_NAME}:\${GIT_COMMIT}'"
-          }
 
+            try {
+              echo ">>>>>>>>>>>>>>>>>> Stoping the container <<<<<<<<<<<<<<<<<<<<<<"
+              sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker stop ${env.APPLICATION_NAME}-tst"
+              echo ">>>>>>>>>>>>>>>>>> Removing the Container <<<<<<<<<<<<<<<<<<<<<<<"
+              sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker rm ${env.APPLICATION_NAME}-tst"
+            } catch (err) {
+              echo "caught the Error: $err"
+            }
+            // Create a container
+            echo "Creating thr container"
+            sh  "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker run -d -p 6761:8761 --name ${env.APPLICATION_NAME}-tst ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+
+
+          }
+             
         }
+
+      }
     }
   }
 }
