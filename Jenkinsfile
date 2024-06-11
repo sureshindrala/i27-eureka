@@ -3,28 +3,28 @@ pipeline {
         label "k8s-slave"
     }
     parameters {
-        choice(name: buildOnly
-        choices: 'no/nyes'
+        choice(name: 'buildOnly',
+        choices: 'no/nyes',
         description: 'This will only build the application'
         )
-        choice (name: scanOnly
-        choices: 'no/nyes'
+        choice (name: 'scanOnly',
+        choices: 'no/nyes',
         description: 'This will only build the application'
         )
-        choice(name: 'dockerPush'
-        choices: 'no/nyes'
+        choice(name: 'dockerPush',
+        choices: 'no/nyes',
         description: 'This will only push the docker image'
         )
-        choice(name:'deployToDev'
-        choices: 'no/nyes'
+        choice(name:'deployToDev',
+        choices: 'no/nyes',
         description: 'This will deploy dev environment'
         )
         choice (name: 'deployToTest',
-        choices: 'no/nyes'
+        choices: 'no/nyes',
         description: 'This will deploy Test environment'
         )
-        choice(name: 'deployToStage'
-        choices: 'no/nyes'
+        choice(name: 'deployToStage',
+        choices: 'no/nyes',
         description: 'This will deploy Stage environment'
         )
     }
@@ -137,7 +137,7 @@ pipeline {
 def dockerDeploy(envDeploy, hostPort, contPort) {
     return {
     echo "******************************** Deploying to $envDeploy Environment ********************************"
-    withCredentials([usernamePassword(credentialsId: 'maha_docker_vm_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+    withCredentials([usernamePassword(credentialsId: 'docker_env_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
         // some block
         // With the help of this block, ,the slave will be connecting to docker-vm and execute the commands to create the containers.
         //sshpass -p ssh -o StrictHostKeyChecking=no user@host command_to_run
