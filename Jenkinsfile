@@ -118,7 +118,7 @@ def dockerDeploy(envDeploy, hostPort, contPort) {
                 sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker pull ${DOCKER_HUB}/${APPLICATION_NAME}:${GIT_COMMIT}
                 '''
 
-                try {
+                /*try {
                     // Stop the container
                     echo ">>>>>>>>>> Stopping the container <<<<<<<<<<<<<<"
                     sh '''
@@ -131,7 +131,7 @@ def dockerDeploy(envDeploy, hostPort, contPort) {
                     '''
                 } catch (err) {
                     echo "Caught the error: $err"
-                }
+                */}
                 // Create the container
                 echo "************** Creating the container **********************"
                 sh '''
