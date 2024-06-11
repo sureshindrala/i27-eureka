@@ -27,6 +27,10 @@ pipeline {
         choices: 'no\nyes',
         description: 'This will deploy Stage environment'
         )
+        choice(name: 'deployToProd',
+        choices: 'no\nyes',
+        description: 'This will deploy prod environment'
+        )
     }
     environment {
         APPLICATION_NAME = "eureka"
@@ -100,6 +104,11 @@ pipeline {
             }
         }
         stage('Deploy to Dev') {
+            when {
+                expression {
+                    params.deployToDev == 'yes'
+                }
+            }
             steps {
                 script {
                     echo "***** Entering Dev Environment *****"
@@ -108,6 +117,11 @@ pipeline {
             }
         }
         stage('Deploy to Test') {
+            when {
+                expression {
+                    params.deployToTest == 'yes'
+                }
+            }
             steps {
                 script {
                     echo "***** Entering Test Environment *****"
@@ -116,6 +130,11 @@ pipeline {
             }
         }
         stage('Deploy to Stage') {
+            when{
+                expression {
+                    params.deployToStage == 'yes'
+                }
+            }
             steps {
                 script {
                     echo "***** Entering Stage Environment *****"
@@ -124,6 +143,11 @@ pipeline {
             }
         }
         stage('Deploy to Prod') {
+            when{
+                expression {
+                    params.deployToProd =='yes'
+                }
+            }
             steps {
                 script {
                     echo "***** Entering Prod Environment *****"
