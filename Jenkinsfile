@@ -104,7 +104,7 @@ pipeline {
             steps {
                 script {
                     echo "***** Entering Test Environment *****"
-                    dockerDeploy('tst', '6761', '8761').call()
+                    dockerDeploy('test', '6761', '8761').call()
                 }
             }
         }
@@ -126,7 +126,7 @@ pipeline {
         }
       }
     }
-      // This method is developed for Deploying our App in different environments
+          // This method is developed for Deploying our App in different environments
     def dockerDeploy(envDeploy,hostport,contPort) {
         return {
           echo " *************** Deploying to $envDeploy Environment**********************"
@@ -148,10 +148,10 @@ pipeline {
             // create container
             echo "************** Creating the container **********************"
             sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker run -d -p $hostPort:$contPort --name ${env.APPLICATION_NAME}-$envDeploy ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
-            }
+              }
             }
           }
-        }
+      }
       
                   
     
