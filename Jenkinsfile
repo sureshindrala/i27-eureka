@@ -131,7 +131,7 @@ def dockerDeploy(envDeploy, hostPort, contPort) {
                     '''
                 } catch (err) {
                     echo "Caught the error: $err"
-                */}
+                }*/
                 // Create the container
                 echo "************** Creating the container **********************"
                 sh '''
