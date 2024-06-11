@@ -96,7 +96,7 @@ pipeline {
             steps {
                 script {
                     echo "***** Entering Test Environment *****"
-                    dockerDeploy('dev ', '5761', '8761').call()
+                    dockerDeploy('dev', '5761', '8761').call()
                 }
             }
         }
@@ -104,7 +104,7 @@ pipeline {
             steps {
                 script {
                     echo "***** Entering Test Environment *****"
-                    dockerDeploy('test', '6761', '8761').call()
+                    dockerDeploy('tst', '6761', '8761')
                 }
             }
         }
@@ -112,7 +112,7 @@ pipeline {
             steps {
                 script {
                     echo "***** Entering Test Environment *****"
-                    dockerDeploy('stage', '7761', '8761').call()
+                    dockerDeploy('stage', '7761', '8761')
                 }
             }
         }
@@ -120,7 +120,7 @@ pipeline {
             steps {
                 script {
                     echo "***** Entering Test Environment *****"
-                    dockerDeploy('prod', '8761', '8761').call()
+                    dockerDeploy('prod', '8761', '8761')
                 }
             }
         }
