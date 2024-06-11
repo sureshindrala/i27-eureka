@@ -6,6 +6,154 @@ pipeline {
         APPLICATION_NAME = "eureka"
         POM_VERSION = readMavenPom().getVersion()
         POM_PACKAGING = readMavenPom().getPackaging()
+        DOCKER_HUB = "docker.io/sureshindrala"
+        DOCKER_CREDS = credentials("dockerhub_creds")
+        SONAR_URL = "http://34.66.190.70:9000/"
+        SONAR_TOKEN = credentials('sonar_creds')
+    }
+    tools {
+        maven 'Maven-3.8.8'
+        jdk 'Jdk-17'
+    }
+    stages {
+        stage('Build') {
+            steps {
+                echo "Building ${env.APPLICATION_NAME} application"
+                sh 'mvn clean package -DskipTests=true'
+            }
+        }
+        stage('Unit Test') {
+            steps {
+                echo "Running unit tests for ${env.APPLICATION_NAME} application"
+                sh 'mvn test'
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
+        }
+        stage('Build & SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                    echo "Starting SonarQube analysis"
+                    mvn clean verify sonar:sonar \
+                        -Dsonar.projectKey=i27-eureka \
+                        -Dsonar.host.url=${SONAR_URL} \
+                        -Dsonar.login=${SONAR_TOKEN}
+                    '''
+                }
+                timeout(time: 5, unit: 'MINUTES') {
+                    script {
+                        waitForQualityGate abortPipeline: true
+                    }
+                }
+            }
+        }
+        stage('Docker Format') {
+            steps {
+                echo "JAR Source: ${env.APPLICATION_NAME}-${env.POM_VERSION}-${env.POM_PACKAGING}"
+                echo "Jar Dest: ${env.APPLICATION_NAME}-${currentBuild.number}-${BRANCH_NAME}-${env.POM_PACKAGING}"
+            }
+        }
+        stage('Docker Build') {
+            steps {
+                sh '''
+                ls -la
+                cp ${WORKSPACE}/target/i27-${APPLICATION_NAME}-${POM_VERSION}.${POM_PACKAGING} ./.cicd
+                ls -la ./.cicd
+                echo "***********Building Docker Image*******************"
+                docker build --force-rm --no-cache --pull --rm=true --build-arg JAR_SOURCE=i27-${APPLICATION_NAME}-${POM_VERSION}.${POM_PACKAGING} -t ${DOCKER_HUB}/${APPLICATION_NAME}:${GIT_COMMIT} ./.cicd
+                docker images
+                echo "************Docker login*******************"
+                docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}
+                echo "**************Docker Push******************"
+                docker push ${DOCKER_HUB}/${APPLICATION_NAME}:${GIT_COMMIT}
+                '''
+            }
+        }
+        stage('Deploy to Dev') {
+            steps {
+                script {
+                    echo "***** Entering Dev Environment *****"
+                    dockerDeploy('dev', '5761', '8761').call()
+                }
+            }
+        }
+        stage('Deploy to Test') {
+            steps {
+                script {
+                    echo "***** Entering Test Environment *****"
+                    dockerDeploy('tst', '6761', '8761').call()
+                }
+            }
+        }
+        stage('Deploy to Stage') {
+            steps {
+                script {
+                    echo "***** Entering Stage Environment *****"
+                    dockerDeploy('stage', '7761', '8761').call()
+                }
+            }
+        }
+        stage('Deploy to Prod') {
+            steps {
+                script {
+                    echo "***** Entering Prod Environment *****"
+                    dockerDeploy('prod', '8761', '8761').call()
+                }
+            }
+        }
+    }
+}
+
+def dockerDeploy(envDeploy, hostPort, contPort) {
+    return {
+        echo "*************** Deploying to $envDeploy Environment**********************"
+        withCredentials([usernamePassword(credentialsId: 'docker_env_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+            script {
+                // Pull the image from Docker server
+                sh '''
+                sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker pull ${DOCKER_HUB}/${APPLICATION_NAME}:${GIT_COMMIT}
+                '''
+
+                try {
+                    // Stop the container
+                    echo ">>>>>>>>>> Stopping the container <<<<<<<<<<<<<<"
+                    sh '''
+                    sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker stop ${APPLICATION_NAME}-$envDeploy
+                    '''
+                    // Remove the container
+                    echo ">>>>>> Removing the container <<<<<<<<<<<<<"
+                    sh '''
+                    sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker rm ${APPLICATION_NAME}-$envDeploy
+                    '''
+                } catch (err) {
+                    echo "Caught the error: $err"
+                }
+                // Create the container
+                echo "************** Creating the container **********************"
+                sh '''
+                sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker run -d -p $hostPort:$contPort --name ${APPLICATION_NAME}-$envDeploy ${DOCKER_HUB}/${APPLICATION_NAME}:${GIT_COMMIT}
+                '''
+            }
+        }
+    }
+}
+
+
+
+
+/*
+pipeline {
+    agent {
+        label "k8s-slave"
+    }
+    environment {
+        APPLICATION_NAME = "eureka"
+        POM_VERSION = readMavenPom().getVersion()
+        POM_PACKAGING = readMavenPom().getPackaging()
         // version + packaging
         DOCKER_HUB = "docker.io/sureshindrala"
         DOCKER_CREDS = credentials("dockerhub_creds")
@@ -160,7 +308,10 @@ pipeline {
 
 
 
-/*
+
+
+
+
 // dev ==> 5761 (HP)
 // test ==> 6761 (HP)
 // stage ==> 7761 (HP)
