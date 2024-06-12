@@ -185,7 +185,7 @@ pipeline {
         }
     }
   }
-}
+
 
 def dockerBuildandpush(){
     return {
