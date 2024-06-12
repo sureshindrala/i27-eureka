@@ -121,6 +121,7 @@ pipeline {
                   dockerBuildandpush().call()
                 }
                
+            }
         }
         stage('Deploy to Dev') {
             when {
