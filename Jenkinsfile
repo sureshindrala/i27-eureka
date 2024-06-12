@@ -177,9 +177,8 @@ pipeline {
             steps {
                 script {
                     imageValidation().call()
-                    echo "***** Entering Prod Environment *****"
                     dockerDeploy('prod', '8761', '8761').call()
-                    echo " Prod environment completed suceesfully"
+                 
                 }
             }
         }
@@ -258,7 +257,7 @@ def imageValidation() {
         }
     }
 
-    def buildApp() {
+def buildApp() {
         return {
             echo "Building ${env.APPLICATION_NAME} application "
             sh "mvn clean package -DskipTests=true"
