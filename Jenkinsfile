@@ -169,7 +169,7 @@ pipeline {
             }
         }
         stage('Deploy to Prod') {
-            when{
+            when {
                 expression {
                     params.deployToProd =='yes'
                 }
@@ -183,6 +183,11 @@ pipeline {
                 }
             }
         }
+        stage('clean') {
+            steps { 
+                cleasWs()
+            }
+        }
     }
   }
 
@@ -191,7 +196,6 @@ def dockerBuildandpush(){
     return {
 
             sh """
-                ls -la
                 cp ${WORKSPACE}/target/i27-${APPLICATION_NAME}-${POM_VERSION}.${POM_PACKAGING} ./.cicd
                 ls -la ./.cicd
                 echo "***********Building Docker Image*******************"
@@ -240,15 +244,16 @@ def dockerDeploy(envDeploy, hostPort, contPort) {
     }
     
 }
-    def imageValidation() {
-        retun {
-            prntln ("Pulling the docker image")
-            try {
-             sh "docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
-            }
-            catch (Exception e) {
-                println ("OOPS..!, Docker images with this tag is not availiable ")
-                buildApp().call()
+def imageValidation() {
+    retun {
+        prntln ("Pulling the docker image")
+        try {
+        sh "docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+        }
+        catch (Exception e) {
+            println ("OOPS..!, Docker images with this tag is not availiable ")
+            buildApp().call()
+            dockerBuildandpush().call()
             }
         }
     }
