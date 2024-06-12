@@ -48,14 +48,17 @@ pipeline {
     stages {
         stage('Build') {
             when {
-                anyOf{
+                anyOf {
                     expression {
                         params.buildOnly == 'yes'
                     }
                 }
             }
             steps {
-                buildApp.call()
+                script {
+                    buildApp.call()
+                }
+                
                // echo "Building ${env.APPLICATION_NAME} application"
                // sh 'mvn clean package -DskipTests=true'
             }
@@ -105,13 +108,6 @@ pipeline {
                 }
             }
         }
-        /*
-        stage('Docker Format') {
-            steps {
-                echo "JAR Source: ${env.APPLICATION_NAME}-${env.POM_VERSION}-${env.POM_PACKAGING}"
-                echo "Jar Dest: ${env.APPLICATION_NAME}-${currentBuild.number}-${BRANCH_NAME}-${env.POM_PACKAGING}"
-            }
-        } */
         stage('Docker Build') {
             when {
                 anyOf {
@@ -124,21 +120,7 @@ pipeline {
                 script{
                     dockerBuildandpush().call()
                 }
-
-                /*sh '''
-                ls -la
-                cp ${WORKSPACE}/target/i27-${APPLICATION_NAME}-${POM_VERSION}.${POM_PACKAGING} ./.cicd
-                ls -la ./.cicd
-                echo "***********Building Docker Image*******************"
-                docker build --force-rm --no-cache --pull --rm=true --build-arg JAR_SOURCE=i27-${APPLICATION_NAME}-${POM_VERSION}.${POM_PACKAGING} -t ${DOCKER_HUB}/${APPLICATION_NAME}:${GIT_COMMIT} ./.cicd
-                docker images
-                echo "************Docker login*******************"
-                docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}
-                echo "**************Docker Push******************"
-                docker push ${DOCKER_HUB}/${APPLICATION_NAME}:${GIT_COMMIT}
-                '''
-            }
-            */
+               
         }
         stage('Deploy to Dev') {
             when {
