@@ -176,7 +176,7 @@ pipeline {
             }
             steps {
                 timeout(time:300, unit: 'SECONDS') {
-                    input massage: "Deploying ${env.APPLICATION_NAME} to prod ????", ok: 'yes' submitter: 'greeshma'
+                    input massage: "Deploying ${env.APPLICATION_NAME} to prod ????", ok: 'yes' , submitter: 'greeshma'
                 }
                 script {
                     imageValidation().call()
