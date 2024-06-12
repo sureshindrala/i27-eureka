@@ -204,7 +204,7 @@ def dockerBuildandpush(){
                 echo "********** pushed image successfully !!!! **********"
              """   
             }
-    }
+}
 
 
 def dockerDeploy(envDeploy, hostPort, contPort) {
