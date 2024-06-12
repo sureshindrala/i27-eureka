@@ -47,12 +47,27 @@ pipeline {
     }
     stages {
         stage('Build') {
+            when {
+                anyOf{
+                    expression {
+                        params.buildOnly == 'yes'
+                    }
+                }
+            }
             steps {
                 echo "Building ${env.APPLICATION_NAME} application"
                 sh 'mvn clean package -DskipTests=true'
             }
         }
         stage('Unit Test') {
+            when {
+                anyOf {
+                    expression {
+                        params.buildOnly == 'yes'
+                        params.dockerPush == 'yes'
+                    }
+                }
+            }
             steps {
                 echo "Running unit tests for ${env.APPLICATION_NAME} application"
                 sh 'mvn test'
@@ -63,8 +78,16 @@ pipeline {
                 }
             }
         }
-        stage('Build & SonarQube Analysis') {
+        stage('sonar') {
+            when {
+                anyOf {
+                    expression {
+                        params.scanOnly == 'yes'
+                    }
+                }
+            }
             steps {
+                echo "******starting with sonarqube********"
                 withSonarQubeEnv('SonarQube') {
                     sh '''
                     echo "Starting SonarQube analysis"
@@ -74,20 +97,28 @@ pipeline {
                         -Dsonar.login=${SONAR_TOKEN}
                     '''
                 }
-                timeout(time: 5, unit: 'MINUTES') {
+                timeout(time: 2, unit: 'MINUTES') {
                     script {
                         waitForQualityGate abortPipeline: true
                     }
                 }
             }
         }
+        /*
         stage('Docker Format') {
             steps {
                 echo "JAR Source: ${env.APPLICATION_NAME}-${env.POM_VERSION}-${env.POM_PACKAGING}"
                 echo "Jar Dest: ${env.APPLICATION_NAME}-${currentBuild.number}-${BRANCH_NAME}-${env.POM_PACKAGING}"
             }
-        }
+        } */
         stage('Docker Build') {
+            when {
+                anyOf {
+                    expression {
+                        params.dockerPush == 'yes'
+                    }
+                }
+            }
             steps {
                 sh '''
                 ls -la
