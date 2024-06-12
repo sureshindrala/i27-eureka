@@ -245,7 +245,7 @@ def dockerDeploy(envDeploy, hostPort, contPort) {
     
 }
 def imageValidation() {
-    retun {
+    return {
         prntln ("Pulling the docker image")
         try {
         sh "docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
@@ -259,7 +259,7 @@ def imageValidation() {
     }
 
     def buildApp() {
-        retun {
+        return {
             echo "Building ${env.APPLICATION_NAME} application "
             sh "mvn clean package -DskipTests=true"
         }
