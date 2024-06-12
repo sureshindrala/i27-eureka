@@ -55,8 +55,9 @@ pipeline {
                 }
             }
             steps {
-                echo "Building ${env.APPLICATION_NAME} application"
-                sh 'mvn clean package -DskipTests=true'
+                buildApp.call()
+               // echo "Building ${env.APPLICATION_NAME} application"
+               // sh 'mvn clean package -DskipTests=true'
             }
         }
         stage('Unit Test') {
@@ -120,7 +121,11 @@ pipeline {
                 }
             }
             steps {
-                sh '''
+                script{
+                    dockerBuildandpush().call()
+                }
+
+                /*sh '''
                 ls -la
                 cp ${WORKSPACE}/target/i27-${APPLICATION_NAME}-${POM_VERSION}.${POM_PACKAGING} ./.cicd
                 ls -la ./.cicd
@@ -133,6 +138,7 @@ pipeline {
                 docker push ${DOCKER_HUB}/${APPLICATION_NAME}:${GIT_COMMIT}
                 '''
             }
+            */
         }
         stage('Deploy to Dev') {
             when {
@@ -142,8 +148,10 @@ pipeline {
             }
             steps {
                 script {
+                    imageValidation().call()
                     echo "***** Entering Dev Environment *****"
                     dockerDeploy('dev', '5761', '8761').call()
+                    echo "******* Deploy Dev Successfully *****"
                 }
             }
         }
@@ -155,8 +163,10 @@ pipeline {
             }
             steps {
                 script {
+                    imageValidation().call()
                     echo "***** Entering Test Environment *****"
                     dockerDeploy('tst', '6761', '8761').call()
+                    echo "*********** Test Environment successfully *******"
                 }
             }
         }
@@ -168,8 +178,10 @@ pipeline {
             }
             steps {
                 script {
+                    imageValidation().call()
                     echo "***** Entering Stage Environment *****"
                     dockerDeploy('stage', '7761', '8761').call()
+                    echo " stage environment completed suceesfully"
                 }
             }
         }
@@ -181,13 +193,36 @@ pipeline {
             }
             steps {
                 script {
+                    imageValidation().call()
                     echo "***** Entering Prod Environment *****"
                     dockerDeploy('prod', '8761', '8761').call()
+                    echo " Prod environment completed suceesfully"
                 }
             }
         }
     }
+  }
 }
+
+def dockerBuildandpush(){
+    return {
+
+            sh """
+                ls -la
+                cp ${WORKSPACE}/target/i27-${APPLICATION_NAME}-${POM_VERSION}.${POM_PACKAGING} ./.cicd
+                ls -la ./.cicd
+                echo "***********Building Docker Image*******************"
+                docker build --force-rm --no-cache --pull --rm=true --build-arg JAR_SOURCE=i27-${APPLICATION_NAME}-${POM_VERSION}.${POM_PACKAGING} -t ${DOCKER_HUB}/${APPLICATION_NAME}:${GIT_COMMIT} ./.cicd
+                docker images
+                echo "************Docker login*******************"
+                docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}
+                echo "**************Docker Push******************"
+                docker push ${DOCKER_HUB}/${APPLICATION_NAME}:${GIT_COMMIT}
+                echo "********** pushed image successfully !!!! **********"
+             """   
+            }
+    }
+
 
 def dockerDeploy(envDeploy, hostPort, contPort) {
     return {
@@ -222,6 +257,25 @@ def dockerDeploy(envDeploy, hostPort, contPort) {
     }
     
 }
+    def imageValidation() {
+        retun {
+            prntln ("Pulling the docker image")
+            try {
+             sh "docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+            }
+            catch (Exception e) {
+                println ("OOPS..!, Docker images with this tag is not availiable ")
+                buildApp().call()
+            }
+        }
+    }
+
+    def buildApp() {
+        retun {
+            echo "Building ${env.APPLICATION_NAME} application "
+            sh "mvn clean package -DskipTests=true"
+        }
+    }
 
 
 
