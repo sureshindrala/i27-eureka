@@ -246,7 +246,7 @@ def dockerDeploy(envDeploy, hostPort, contPort) {
 }
 def imageValidation() {
     return {
-        prntln ("Pulling the docker image")
+        println ("Pulling the docker image")
         try {
         sh "docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
         }
