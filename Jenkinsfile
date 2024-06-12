@@ -56,7 +56,7 @@ pipeline {
             }
             steps {
                 script {
-                    buildApp.call()
+                   buildApp.call()
                 }
                 
                // echo "Building ${env.APPLICATION_NAME} application"
@@ -117,8 +117,8 @@ pipeline {
                 }
             }
             steps {
-                script{
-                    dockerBuildandpush().call()
+                script {
+                  dockerBuildandpush().call()
                 }
                
         }
