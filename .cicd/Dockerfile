@@ -9,5 +9,5 @@ RUN mkdir -p /opt/sureshindrala1
 WORKDIR /opt/sureshindrala1
 COPY ["${JAR_SOURCE}","/opt/sureshindrala1/i27cart-user.jar"]
 RUN chmod 777 /opt/sureshindrala1
-EXPOSE 8232
+EXPOSE 8231
 CMD ["java","-jar","/opt/sureshindrala1/i27cart-user.jar"]
