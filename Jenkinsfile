@@ -1,12 +1,4 @@
-@Library("com.i27academy.slb@master") _
-dockerPipeline()
-
-
-
-
-
-
-/*pipeline {
+pipeline {
     agent {
         label "k8s-slave"
     }
@@ -284,7 +276,7 @@ def buildApp() {
     }
 
 
-================================================================================================
+/*
 
 pipeline {
     agent {
