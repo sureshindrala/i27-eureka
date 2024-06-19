@@ -199,6 +199,10 @@ pipeline {
             }
         }
     }
+
+  }
+
+
 def dockerBuildandpush(){
     return {
 
@@ -217,7 +221,6 @@ def dockerBuildandpush(){
             }
 }
 
-  }
 
 def dockerDeploy(envDeploy, hostPort, contPort) {
     return {
