@@ -193,7 +193,7 @@ pipeline {
             }
             steps {
                 timeout(time: 300, unit: 'SECONDS') {
-                    input message: "Deploying ${env.APPLICATION_NAME} to prod ????", ok: 'yes', submitter: 'krish'
+                    input message: "Deploying ${env.APPLICATION_NAME} to prod ????", ok: 'yes', submitter: 'suresh'
                 }
                 script {
                     imageValidation().call()
