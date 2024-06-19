@@ -44,7 +44,6 @@ pipeline {
     tools {
         maven 'Maven-3.8.8'
         jdk 'Jdk-17'
-    
     }
     stages {
         stage ('Build'){
