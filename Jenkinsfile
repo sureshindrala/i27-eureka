@@ -1,6 +1,6 @@
 @Library("com.i27academy.slb@main") _
 dockerPipeline(
-    appName : 'Greesh'
+    appName : 'eureka'
 )
 /*
 // dev ==> 5761 (HP)
