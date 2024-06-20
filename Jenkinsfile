@@ -1,5 +1,7 @@
 @Library("com.i27academy.slb@main") _
-dockerPipeline()
+dockerPipeline(
+    appName = 'eureka'
+)
 /*
 // dev ==> 5761 (HP)
 // test ==> 6761 (HP)
