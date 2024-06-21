@@ -1,5 +1,5 @@
 @Library("com.i27academy.slb@main") _
-dockerPipeline(
+k8spipeline(
     appName : 'eureka'
 )
 /*
