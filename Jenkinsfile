@@ -1,5 +1,5 @@
 @Library("com.i27academy.slb@main") _
-k8spipeline(
+k8Spipeline (
     appName : 'eureka'
 )
 /*
@@ -9,4 +9,3 @@ k8spipeline(
 // Prod ==> 8761 (HP)
 
 
-  */
