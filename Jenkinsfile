@@ -59,10 +59,10 @@ pipeline {
                 // Application Build happens here
                 steps { // jenkins env variable no need of env 
                     script {
-                        //buildApp().call()
-                        echo "********* Executing Addition Method**********"
-                        println docker.add(8,9)
-                        docker.buildApp("${env.APPLICATION_NAME}")
+                        buildApp().call()
+                        //echo "********* Executing Addition Method**********"
+                        //println docker.add(8,9)
+                        //docker.buildApp("${env.APPLICATION_NAME}")
                     }
 
                     //-DskipTests=true 
@@ -112,7 +112,7 @@ pipeline {
                 
                 }
             }
-            /*
+            
             stage ('Docker Format') {
                 steps {
                     // Tell me, how can i read a pom.xml from jenkinfile
@@ -122,7 +122,7 @@ pipeline {
                     //eureka-06-master.jar
                     echo "Custom Format: ${env.APPLICATION_NAME}-${currentBuild.number}-${BRANCH_NAME}.${env.POM_PACKAGING}"
                 }
-            }*/
+            
             stage ('Docker Build and Push') {
                 when {
                     anyOf {
