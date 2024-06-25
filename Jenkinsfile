@@ -212,6 +212,7 @@ pipeline {
                 }
             }
         }
+    }
 
     def buildApp(appName) {
         jenkins.sh """#/bin/bash
@@ -270,7 +271,7 @@ pipeline {
     }
         
     }
-}
+
 
     def imageValidation() {
         return {
