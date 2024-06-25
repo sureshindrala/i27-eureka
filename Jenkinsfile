@@ -267,9 +267,10 @@ pipeline {
             sh "sshpass -p ${PASSWORD} -v ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker run -d -p $hostPort:$contPort --name ${env.APPLICATION_NAME}-$envDeploy ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
             }
         }
-        }
+    }
         
     }
+}
 
     def imageValidation() {
         return {
