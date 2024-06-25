@@ -113,7 +113,7 @@ pipeline {
                 }
             }
             
-            stage ('Docker Format') {
+            /*stage ('Docker Format') {
                 steps {
                     // Tell me, how can i read a pom.xml from jenkinfile
                     echo "Actual Format: ${env.APPLICATION_NAME}-${env.POM_VERSION}-${env.POM_PACKAGING}"
@@ -122,7 +122,7 @@ pipeline {
                     //eureka-06-master.jar
                     echo "Custom Format: ${env.APPLICATION_NAME}-${currentBuild.number}-${BRANCH_NAME}.${env.POM_PACKAGING}"
                 }
-            
+            */
             stage ('Docker Build and Push') {
                 when {
                     anyOf {
