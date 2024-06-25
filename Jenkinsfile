@@ -208,11 +208,11 @@ pipeline {
             stage ('clean'){
                 steps {
                     cleanWs()
-                    }
                 }
             }
         }
     }
+    
 
     def buildApp(appName) {
         jenkins.sh """#/bin/bash
