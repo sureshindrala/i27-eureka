@@ -194,7 +194,7 @@ pipeline {
 def dockerBuildandPush() {
     return {
         echo "******************************** Build Docker Image ********************************"
-        sh "cp ${workspace}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd"
+        sh "cp ${WORKSPACE}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd"
         sh "ls -la ./.cicd"
         sh "docker build --force-rm --no-cache --pull --rm=true --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} ./.cicd"
         echo "******************************** Login to Docker Repo ********************************"
@@ -225,6 +225,7 @@ def dockerDeploy(envDeploy, hostPort, contPort) {
         }
     }
 }
+
 
 def imageValidation() {
     return {
