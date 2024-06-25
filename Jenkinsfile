@@ -198,7 +198,7 @@ def dockerBuildandPush() {
         sh "ls -la ./.cicd"
         sh "docker build --force-rm --no-cache --pull --rm=true --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} ./.cicd"
         echo "******************************** Login to Docker Repo ********************************"
-        sh "docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}"
+        sh 'docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}'
         echo "******************************** Docker Push ********************************"
         sh "docker push ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
         echo "Pushed the image successfully!!!"
@@ -245,3 +245,6 @@ def buildApp() {
         sh "mvn clean package -DskipTests=true"
     }
 }
+
+
+
