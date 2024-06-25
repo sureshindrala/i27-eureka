@@ -1,3 +1,10 @@
+@Library("com.i27academy.slb@master") _
+dockerPipeline(
+    appName: 'eureka'
+)
+
+
+/*
 pipeline {
     agent {
         label 'k8s-slave'
@@ -281,3 +288,4 @@ def buildApp() {
     }
 
 }
+*/
