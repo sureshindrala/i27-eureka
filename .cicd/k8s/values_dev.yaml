@@ -1,9 +1,0 @@
-name: i27-eureka
-fullname: i27-eureka-dev
-replicas:
-  default: 1
-image:
-  name: flipcart.jfrog.io/images-docker/eureka
-  tag: dev  # helm --set key=value -f filename  
-targetport: 8761
-
