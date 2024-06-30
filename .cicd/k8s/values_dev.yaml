@@ -1,0 +1,7 @@
+name: i27-eureka
+fullname: i27-eureka-dev
+replicas: 2
+image:
+  name: docker.io/sureshindrala/eureka
+  tag: dev
+targetPort: 8761
